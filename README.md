@@ -13,7 +13,9 @@ As I make progress with Object Recognition, I will be updating my youtube with r
 
 #Contact
 If you have any questions regarding openCV or would like get in touch for other reasons, please feel free to contact me:
-[Github](http://github.com/ariskoumis)
+
+Github: [ariskoumis](http://github.com/ariskoumis)
+
 Email: <a href="mailto:ariskoumis@gmail.com">ariskoumis@gmail.com</a>.
 
 Thank you for reading!
