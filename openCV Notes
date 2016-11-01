@@ -1,0 +1,277 @@
+
+Necessary
+	#include <opencv2/opencv.hpp>
+	using namespace cv;
+
+Data Types for Arrays
+	Defines the number of bits allocated for each elements in an array (pixels in an image) and how value is represented for those bits
+
+	Single Channel Arrays
+		CV_8U (8 bit unsigned integer)
+		CV_8S (8 bit signed integer)
+		CV_16U (16 bit unsigned integer)
+		CV_16S (16 bit signed integer)
+		CV_32S (32 bit signed integer)
+		CV_32F (32 bit floating point number)
+		CV_64F (64 bit float floating point number)
+
+	Multi Channel Arrays
+		CV_8UC1 (single channel array with 8 bit unsigned integers) 
+		CV_8UC2 (2 channel array with 8 bit unsigned integers)
+		CV_8UC3 (3 channel array with 8 bit unsigned integers)
+		CV_8UC4 (4 channel array with 8 bit unsigned integers)
+		CV_8UC(n) (n channel array with 8 bit unsigned integers (n can be from 1 to 512) )
+
+	Assignment Ex
+		Mat img1(3, 5, CV_32F ); //3 x 5 single-channel array with 32 bit floating point numbers
+
+	Bit Depths for IplImage (C style)
+		Bit Depth: Number of bits allocated for a pixel
+			ex
+				IplImage with IPL_DEPTCH_8U uses 8 bit unsigned interger per each pixel
+					each pixel can hold 0 to 255 integer numbers
+				
+Basics
+	Mat img = imread("Filename", CV_LOAD_IMAGE_COLOR) // file
+	bool img.empty()
+	namedWindow("NameOfWindow", CV_WINDOW_FULLSCREEN);
+	imshow("NameOfWindor", img)
+	waitKey(0)
+	destroyWindow("MyWindow");
+
+Image Processing Basics
+	Image has pixels, pixels have value between 0 and 255 (int)
+	When pixel vaule is increased, intensiy of pixel is increased
+
+	Pixel Depth
+		Number of bits allocated for each pixel
+			If 8, each value can be between 0 and 255
+
+	Example
+
+		23	23	34	255	0
+		78	245	129	25	251
+		23	12	89	90	37
+		84	26	47	127	199
+
+		Image Depth: 8 bit
+		Channels: 1 (Means its greyscale, if theres 3 channel its RGB)
+		Resolution: 4x5
+
+Creating a Blank Image
+	Mat img( 500, 1000, CV_8UC3, Scalar(0, 0, 100) )
+		500 high, 10000 wide
+		3 channels, 8 bit image depth
+		(0, 0, 100) = Blue, Green, and Red respectively
+
+Opening a video
+	VideoCapture cap( "videoname.mp4")
+	bool cap.isOpened()
+	double fps = cap.get( CV_CAP_PROP_FPS )
+	namedWindow( "MyWindow", CV_WINDOW_AUTOSIZE )
+
+	while (1) {
+		Mat frame;
+		bool bSuccess = cap.read(frame); // read new frame from video
+		if (!bSuccess) {
+			break;
+		}
+		imshow(  "Myvideo", frame);
+		if ( waitKey(30) == 27 ) { // esc closed for 30
+			break
+		}
+	}
+
+From Webcam
+	VideoCapture cap(0); // Camera 1
+	bool cap.isOpened();
+	double dWidtch = cap.get(CV_CAP_PROP_FRAME_WIDTH)
+	double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT)
+	namedWindow( "MyVideo", CV_WINDOW_AUTOSIZE )
+	
+	while (1) {
+		bool bSuccess = cap.read( frame )
+
+		if (!bSuccess) {
+			break;
+		}
+
+		imshow(  "Myvideo", frame);
+
+		if ( waitKey(30) == 27 ) { // esc closed for 30
+			break
+		}
+
+	}
+
+Writing Image to File
+	Mat img(650, 600, CV_16UC3, Scalar(0,50000, 50000)); 
+		//create an image ( 3 channels, 16 bit image depth, 650 high, 600 wide, (0, 50000, 50000) assigned for Blue, Green and Red plane respectively. )
+	vector<int> compression_params; 
+		//vector that stores the compression parameters of the image
+	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY); 
+		//specify the compression technique
+	compression_params.push_back(98); 
+		//specify the compression quality
+	bool bSuccess = imwrite("TestImage.jpg", img, compression_params); 
+		//write the image to file
+
+
+
+Writing Video to File
+	VideoCapture cap(0); // Camera 1
+	bool cap.isOpened();
+	double dWidtch = cap.get(CV_CAP_PROP_FRAME_WIDTH)
+	double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT)
+	namedWindow( "MyVideo", CV_WINDOW_AUTOSIZE )
+
+	Size frameSize(static_cast<int>(dWidth), static_cast<int>(dHeight));
+	
+	VideoWriter oVideoWriter ("MyVideo.avi", CV_FOURCC('P','I','M','1'), 20, frameSize, true); //initialize the VideoWriter object
+		CV_FOURCC('D', 'I', 'V', '3') for DivX MPEG-4 codec
+		CV_FOURCC('M', 'P', '4', '2') for MPEG-4 codec
+		CV_FOURCC('D', 'I', 'V', 'X') for DivX codec 
+		CV_FOURCC('P','I','M','1') for MPEG-1 codec
+		CV_FOURCC('I', '2', '6', '3') for ITU H.263 codec
+		CV_FOURCC('M', 'P', 'E', 'G') for MPEG-1 codec
+
+
+	bool oVideoWriter.isOpened()
+
+	SAME WHILE LOOP AS BEFORE, JUST ADD FOLLOWING COMMAND
+
+	oVideWriter.write(frame);
+
+Image Manipulation
+	Erode
+		IplImage* img = cvLoadImage("imageName.jpg");
+	    cvErode(img, img, 0, 2);
+	    	Source, Destination, Structuring Element Used (0 means 3x3 rectangular strucuring element is used), number of time erosion is applied
+	    cvNamedWindow("Eroded");
+	    cvShowImage("Eroded", img);
+	    //when done
+	    cvReleaseImage(&img)
+
+	Dialate
+		cvDialate(img, img, 0, 2);
+
+	Invert
+		cvNot(img, img)
+
+Trackbar
+	int iSliderVale1 = 50;
+	createTrackBar("Brightness", "My Window", &iSliderValue1, 100);
+		( trackbarname, windowname, slider position, max value of trackbar, callback(onchange, userdata) 
+
+	while (true) {
+		Mat dst;
+		int iBrightness = iSliderValue1 - 50;
+		src.convertTo( dst, -1, dContrast, iBrightness);
+
+		imgshow( " MyWindow ")
+	}
+
+
+Mouse Click
+	void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+		{
+		     if  ( event == EVENT_LBUTTONDOWN )
+		     {
+		          cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+		     }
+		     else if  ( event == EVENT_RBUTTONDOWN )
+		     {
+		          cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+		     }
+		     else if  ( event == EVENT_MBUTTONDOWN )
+		     {
+		          cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+		     }
+		     else if ( event == EVENT_MOUSEMOVE )
+		     {
+		          cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+
+		     }
+		}
+
+	int main() {
+		// Read image from file
+	    Mat img = imread("IMG_5874.JPG");
+	    
+	    //if fail to read the image
+	    if ( img.empty() )
+	    {
+	        cout << "Error loading the image" << endl;
+	        return -1;
+	    }
+	    
+	    //Create a window
+	    namedWindow("My Window", 1);
+	    
+	    //set the callback function for any mouse event
+	    setMouseCallback("My Window", CallBackFunc, NULL);
+	    
+	    //show the image
+	    imshow("My Window", img);
+	    
+	    // Wait until user press some key
+	    waitKey(0);
+	    
+	    return 0;
+	}
+
+Mouse clicks while pressing key
+	void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+	{
+	     if ( flags == (EVENT_FLAG_CTRLKEY + EVENT_FLAG_LBUTTON) )
+	     {
+	          cout << "Left mouse button is clicked while pressing CTRL key - position (" << x << ", " << y << ")" << endl;
+	     }
+	     else if ( flags == (EVENT_FLAG_RBUTTON + EVENT_FLAG_SHIFTKEY) )
+	     {
+	          cout << "Right mouse button is clicked while pressing SHIFT key - position (" << x << ", " << y << ")" << endl;
+	     }
+	     else if ( event == EVENT_MOUSEMOVE && flags == EVENT_FLAG_ALTKEY)
+	     {
+	          cout << "Mouse is moved over the window while pressing ALT key - position (" << x << ", " << y << ")" << endl;
+	     }
+	}
+
+Color Detection Misc.
+	Morphological Opening
+		used to eliminate detected objects in foreground
+		erode, then dialate
+
+	Morphological Closing
+
+	void inRange(InputArray src, InputArray lowerb, InputArray upperb, OutputArray dst);
+		Checks that each element of 'src'  lies between 'lowerb' and 'upperb'. If so, that respective location of  'dst' is assigned '255' , otherwise '0'. (Pixels with value 255 is shown as white whereas pixels with value 0 is shown as black)
+
+	void erode( InputArray src, OutputArray dst, InputArray kernel, Point anchor=Point(-1,-1), int iterations=1, int borderType=BORDER_CONSTANT, const Scalar& borderValue=morphologyDefaultBorderValue() )
+		> InputArray src - Source image
+		> OutputArray dst - Destination image (should have the same size and type as the source image)
+		> InputArray kernel - Structuring element which is used to erode the source image
+		> Point anchor - Position of the anchor within the kernel. If it is Point(-1, -1), the center of the kernel is taken as the position of anchor
+		> int iterations - Number of times erosion is applied
+		> int borderType - Pixel extrapolation method in a boundary condition
+		> const Scalar& borderValue - Value of the pixels in a boundary condition if borderType = BORDER_CONSTANT
+
+Color Tracking
+	
+	misc notes
+		moments
+			moment of x~i and y~j = integral ( integral ( x^i * y^j * f(x,y) * dx) * dy))
+
+			in our case, f(x,y) is light intesnsity @ (x,y)
+
+			moments relative to y axis: oMoments.mo1
+				objects center of gravity?
+			moments relative to x axis: oMoments.m10
+			total intensity of image: oMoments.m00
+
+			object's x position: momentX / Area
+			object's y position: momentY / Area
+
+
+
+
